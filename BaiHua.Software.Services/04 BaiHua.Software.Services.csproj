@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\BaiHua.Software.Core\BaiHua.Software.Core.csproj" />
-    <ProjectReference Include="..\BaiHua.Software.Common\BaiHua.Software.Common.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.Core\02 BaiHua.Software.Core.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.Common\01 BaiHua.Software.Common.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

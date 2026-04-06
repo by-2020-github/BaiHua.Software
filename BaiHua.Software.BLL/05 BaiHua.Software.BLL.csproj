@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaiHua.Software.Core\02 BaiHua.Software.Core.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.Services\04 BaiHua.Software.Services.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.HAL\02 BaiHua.Software.HAL.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

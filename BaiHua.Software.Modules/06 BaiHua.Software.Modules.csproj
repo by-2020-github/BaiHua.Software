@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaiHua.Software.Core\02 BaiHua.Software.Core.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.BLL\05 BaiHua.Software.BLL.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.Services\04 BaiHua.Software.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Prism.Wpf" Version="9.0.537" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RootNamespace>BaiHua.Software.Modules</RootNamespace>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+</Project>

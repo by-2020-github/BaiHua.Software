@@ -1,9 +1,25 @@
-<Solution> 
-  <Project Path="BaiHua.Software.Core\BaiHua.Software.Core.csproj" /> 
-  <Project Path="BaiHua.Software.Common\BaiHua.Software.Common.csproj" /> 
-  <Project Path="BaiHua.Software.Infrastructure\BaiHua.Software.Infrastructure.csproj" /> 
-  <Project Path="BaiHua.Software.HAL\BaiHua.Software.HAL.csproj" /> 
-  <Project Path="BaiHua.Software.BLL\BaiHua.Software.BLL.csproj" /> 
-  <Project Path="BaiHua.Software.Services\BaiHua.Software.Services.csproj" /> 
-  <Project Path="BaiHua.Software.UI\BaiHua.Software.UI.csproj" /> 
+<Solution>
+  <Folder Name="/BaiHua.Software.BLL/">
+    <Project Path="BaiHua.Software.BLL/05 BaiHua.Software.BLL.csproj" />
+  </Folder>
+  <Folder Name="/BaiHua.Software.Common/">
+    <Project Path="BaiHua.Software.Common/01 BaiHua.Software.Common.csproj" />
+  </Folder>
+  <Folder Name="/BaiHua.Software.Core/">
+    <Project Path="BaiHua.Software.Core/02 BaiHua.Software.Core.csproj" />
+  </Folder>
+  <Folder Name="/BaiHua.Software.HAL/">
+    <Project Path="BaiHua.Software.HAL/02 BaiHua.Software.HAL.csproj" />
+  </Folder>
+  <Folder Name="/BaiHua.Software.Infrastructure/">
+    <Project Path="BaiHua.Software.Infrastructure/03 BaiHua.Software.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/BaiHua.Software.Modules/">
+    <Project Path="BaiHua.Software.Modules/06 BaiHua.Software.Modules.csproj" />
+  </Folder>
+  <Folder Name="/BaiHua.Software.Services/">
+    <Project Path="BaiHua.Software.Services/04 BaiHua.Software.Services.csproj" />
+  </Folder>
+  <Folder Name="/BaiHua.Software.UI/" />
+  <Project Path="BaiHua.Software.UI/100 BaiHua.Software.UI.csproj" />
 </Solution> 

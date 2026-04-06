@@ -1,18 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\BaiHua.Software.BLL\BaiHua.Software.BLL.csproj" />
-    <ProjectReference Include="..\BaiHua.Software.Infrastructure\BaiHua.Software.Infrastructure.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.BLL\05 BaiHua.Software.BLL.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.Infrastructure\03 BaiHua.Software.Infrastructure.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.Modules\06 BaiHua.Software.Modules.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Prism.DryIoc" Version="9.0.537" />
+    <PackageReference Include="Prism.Wpf" Version="9.0.537" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
   </ItemGroup>
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+    <RootNamespace>BaiHua.Software.UI</RootNamespace>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>

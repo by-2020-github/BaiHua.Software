@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\BaiHua.Software.Core\BaiHua.Software.Core.csproj" />
+    <ProjectReference Include="..\BaiHua.Software.Core\02 BaiHua.Software.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
