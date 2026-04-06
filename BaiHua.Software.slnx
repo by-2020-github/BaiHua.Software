@@ -1,0 +1,9 @@
+<Solution> 
+  <Project Path="BaiHua.Software.Core\BaiHua.Software.Core.csproj" /> 
+  <Project Path="BaiHua.Software.Common\BaiHua.Software.Common.csproj" /> 
+  <Project Path="BaiHua.Software.Infrastructure\BaiHua.Software.Infrastructure.csproj" /> 
+  <Project Path="BaiHua.Software.HAL\BaiHua.Software.HAL.csproj" /> 
+  <Project Path="BaiHua.Software.BLL\BaiHua.Software.BLL.csproj" /> 
+  <Project Path="BaiHua.Software.Services\BaiHua.Software.Services.csproj" /> 
+  <Project Path="BaiHua.Software.UI\BaiHua.Software.UI.csproj" /> 
+</Solution> 
