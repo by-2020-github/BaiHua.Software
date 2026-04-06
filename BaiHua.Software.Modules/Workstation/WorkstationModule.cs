@@ -36,6 +36,7 @@ public class WorkstationModule : ModuleBase, IModuleLifecycle
         {
             Name = nameof(WorkstationModule),
             DisplayName = "工站控制",
+            IconGlyph = "",
             Description = "监控工站状态，执行启动、停止和复位操作。",
             ViewType = typeof(WorkstationView),
             Region = "ContentRegion",

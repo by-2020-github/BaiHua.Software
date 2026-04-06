@@ -14,114 +14,137 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- 顶部菜单栏 -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#2E3440" Margin="0">
-            <TextBlock Text="BaiHua.Software" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="10"/>
-            <Menu Foreground="White" Background="Transparent" Margin="20,0,0,0">
-                <MenuItem Header="文件" Foreground="White">
-                    <MenuItem Header="退出" Command="{Binding ExitApplicationCommand}"/>
-                </MenuItem>
-                <MenuItem Header="帮助" Foreground="White">
-                    <MenuItem Header="关于"/>
-                </MenuItem>
-            </Menu>
-        </StackPanel>
+        <Border Grid.Row="0" Background="#111827" Padding="20,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- 主内容区域 -->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="260"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="BaiHua.Software" Foreground="White" FontSize="22" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding CurrentModuleTitle}" Margin="0,6,0,0" Foreground="#9CA3AF" FontSize="13"/>
+                </StackPanel>
 
-            <!-- 左侧模块列表 -->
-            <Border Grid.Column="0" Background="#ECEFF1" Padding="12">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Border Background="#1F2937" CornerRadius="10" Padding="14,10" Margin="0,0,12,0">
+                        <StackPanel>
+                            <TextBlock Text="设备状态" Foreground="#9CA3AF" FontSize="11"/>
+                            <TextBlock Text="{Binding DeviceStatusText}" Foreground="White" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="#1F2937" CornerRadius="10" Padding="14,10" Margin="0,0,12,0">
+                        <StackPanel>
+                            <TextBlock Text="工位信息" Foreground="#9CA3AF" FontSize="11"/>
+                            <TextBlock Text="{Binding WorkstationStatusText}" Foreground="White" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="#1F2937" CornerRadius="10" Padding="14,10">
+                        <StackPanel>
+                            <TextBlock Text="刷新时间" Foreground="#9CA3AF" FontSize="11"/>
+                            <TextBlock Text="{Binding LastRefreshText}" Foreground="White" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
 
-                    <StackPanel>
-                        <TextBlock Text="模块导航" FontSize="18" FontWeight="Bold" Foreground="#1F2937"/>
-                        <TextBlock Text="{Binding ModuleCountText}" Margin="0,4,0,0" Foreground="#6B7280"/>
-                    </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#1F2937" CornerRadius="10" Padding="14,10" Margin="0,0,12,0">
+                        <StackPanel>
+                            <TextBlock Text="用户信息" Foreground="#9CA3AF" FontSize="11"/>
+                            <TextBlock Text="{Binding CurrentUserText}" Foreground="White" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <Button Content="最小化" Command="{Binding MinimizeWindowCommand}" Padding="16,8" Margin="0,0,8,0" Background="#374151" Foreground="White" BorderBrush="#4B5563"/>
+                    <Button Content="退出" Command="{Binding ExitApplicationCommand}" Padding="16,8" Background="#DC2626" Foreground="White" BorderBrush="#DC2626"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-                    <DockPanel Grid.Row="1" Margin="0,12,0,12">
-                        <Button DockPanel.Dock="Right" Content="清空" Command="{Binding ClearSearchCommand}" Margin="8,0,0,0" Padding="12,6"/>
-                        <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Padding="8,6"/>
-                    </DockPanel>
-
-                    <ListBox Grid.Row="2"
-                             ItemsSource="{Binding FilteredModules}"
-                             SelectedItem="{Binding SelectedModule}"
-                             Background="Transparent"
-                             BorderThickness="0">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border Padding="12" CornerRadius="8">
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding DisplayName}" FontSize="14" FontWeight="Bold" Foreground="#111827"/>
-                                        <TextBlock Text="{Binding Description}" Margin="0,6,0,0" TextWrapping="Wrap" Foreground="#6B7280" FontSize="11"/>
-                                        <TextBlock Text="{Binding Name}" Margin="0,8,0,0" FontSize="10" Foreground="#9CA3AF"/>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="Margin" Value="0,0,0,8"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="#DBEAFE"/>
-                                        <Setter Property="BorderBrush" Value="#60A5FA"/>
-                                        <Setter Property="BorderThickness" Value="1"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                    </ListBox>
-                </Grid>
-            </Border>
-
-            <!-- 右侧内容区域 -->
-            <Grid Grid.Column="1" Margin="10">
+        <Border Grid.Row="1" Margin="16,16,16,12" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="12">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,10">
-                    <DockPanel>
-                        <StackPanel DockPanel.Dock="Left">
-                            <TextBlock Text="{Binding CurrentModuleTitle}" FontSize="20" FontWeight="Bold" Foreground="#111827"/>
-                            <TextBlock Text="{Binding CurrentModuleDescription}" Margin="0,6,0,0" Foreground="#6B7280"/>
-                        </StackPanel>
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button Content="首页" Command="{Binding NavigateHomeCommand}" Padding="14,8" Margin="0,0,8,0"/>
-                            <Button Content="上一页" Command="{Binding NavigatePreviousCommand}" Padding="14,8" Margin="0,0,8,0"/>
-                            <Button Content="下一页" Command="{Binding NavigateNextCommand}" Padding="14,8"/>
-                        </StackPanel>
-                    </DockPanel>
-                </Border>
+                <DockPanel Grid.Row="0" Margin="20,18,20,14">
+                    <StackPanel DockPanel.Dock="Left">
+                        <TextBlock Text="{Binding CurrentModuleTitle}" FontSize="24" FontWeight="Bold" Foreground="#111827"/>
+                        <TextBlock Text="{Binding CurrentModuleDescription}" Margin="0,6,0,0" Foreground="#6B7280"/>
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="首页" Command="{Binding NavigateHomeCommand}" Padding="14,8" Margin="0,0,8,0" Background="#F3F4F6" BorderBrush="#D1D5DB"/>
+                        <Button Content="上一页" Command="{Binding NavigatePreviousCommand}" Padding="14,8" Margin="0,0,8,0" Background="#F3F4F6" BorderBrush="#D1D5DB"/>
+                        <Button Content="下一页" Command="{Binding NavigateNextCommand}" Padding="14,8" Background="#F3F4F6" BorderBrush="#D1D5DB"/>
+                    </StackPanel>
+                </DockPanel>
 
-                <Border Grid.Row="1" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                <Border Grid.Row="1" Margin="20,0,20,20" Background="#F9FAFB" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="10">
                     <ContentControl prism:RegionManager.RegionName="ContentRegion"/>
                 </Border>
             </Grid>
-        </Grid>
+        </Border>
 
-        <!-- 底部状态栏 -->
-        <StatusBar Grid.Row="2" Background="#ECEFF1">
-            <TextBlock Text="{Binding CurrentModuleTitle}" Foreground="#212121"/>
-            <Separator/>
-            <TextBlock Text="{Binding NavigationStatus}" Foreground="#212121"/>
-            <Separator/>
-            <TextBlock Text="{Binding ModuleCountText}" Foreground="#212121"/>
-        </StatusBar>
+        <Border Grid.Row="2" Background="#111827" Padding="16,12">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" Margin="0,0,0,10">
+                    <TextBlock Text="模块导航" Foreground="White" FontSize="16" FontWeight="Bold"/>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <TextBlock Text="{Binding NavigationStatus}" Foreground="#D1D5DB" Margin="0,0,16,0"/>
+                        <TextBlock Text="{Binding ModuleCountText}" Foreground="#D1D5DB"/>
+                    </StackPanel>
+                </DockPanel>
+
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding FilteredModules}"
+                         SelectedItem="{Binding SelectedModule}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="16,12" CornerRadius="10">
+                                <StackPanel Width="140">
+                                    <TextBlock Text="{Binding IconGlyph}" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" Foreground="White"/>
+                                    <TextBlock Text="{Binding DisplayName}" Margin="0,8,0,0" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" Foreground="White"/>
+                                    <TextBlock Text="{Binding Name}" Margin="0,4,0,0" FontSize="10" HorizontalAlignment="Center" Foreground="#9CA3AF"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0,0,12,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#2563EB"/>
+                                    <Setter Property="BorderBrush" Value="#60A5FA"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#1F2937"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

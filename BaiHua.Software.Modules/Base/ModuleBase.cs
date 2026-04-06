@@ -41,6 +41,11 @@ public class ModuleExport
     public string DisplayName { get; set; } = string.Empty;
 
     /// <summary>
+    /// 导航图标（Segoe MDL2 Assets）
+    /// </summary>
+    public string IconGlyph { get; set; } = "\uE80F";
+
+    /// <summary>
     /// 模块说明
     /// </summary>
     public string Description { get; set; } = string.Empty;

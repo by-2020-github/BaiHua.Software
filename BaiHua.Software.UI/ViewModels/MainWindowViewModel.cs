@@ -1,6 +1,7 @@
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation.Regions;
+using BaiHua.Software.Core.Application;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -16,6 +17,7 @@ public class MainWindowViewModel : BindableBase
 {
     private readonly IRegionManager _regionManager;
     private readonly AppModules.IModuleManager _moduleManager;
+    private readonly IRuntimeStateService _runtimeStateService;
     private readonly List<AppModules.ModuleExport> _allModules = [];
     private readonly List<string> _navigationHistory = [];
 
@@ -24,7 +26,11 @@ public class MainWindowViewModel : BindableBase
     private AppModules.ModuleExport? _selectedModule;
     private string _filterText = string.Empty;
     private string _currentModuleTitle = "欢迎";
-    private string _currentModuleDescription = "请选择左侧模块开始操作。";
+    private string _currentModuleDescription = "请选择底部模块开始操作。";
+    private string _deviceStatusText = "设备状态加载中...";
+    private string _workstationStatusText = "工位状态加载中...";
+    private string _currentUserText = $"当前用户：{Environment.UserName}";
+    private string _lastRefreshText = "更新时间：--";
     private int _navigationHistoryIndex = -1;
     private bool _recordSelectionInHistory = true;
 
@@ -77,6 +83,30 @@ public class MainWindowViewModel : BindableBase
         set => SetProperty(ref _currentModuleDescription, value);
     }
 
+    public string DeviceStatusText
+    {
+        get => _deviceStatusText;
+        set => SetProperty(ref _deviceStatusText, value);
+    }
+
+    public string WorkstationStatusText
+    {
+        get => _workstationStatusText;
+        set => SetProperty(ref _workstationStatusText, value);
+    }
+
+    public string CurrentUserText
+    {
+        get => _currentUserText;
+        set => SetProperty(ref _currentUserText, value);
+    }
+
+    public string LastRefreshText
+    {
+        get => _lastRefreshText;
+        set => SetProperty(ref _lastRefreshText, value);
+    }
+
     public string NavigationStatus => _navigationHistoryIndex >= 0
         ? $"导航记录：{_navigationHistoryIndex + 1}/{_navigationHistory.Count}"
         : "导航记录：0/0";
@@ -84,25 +114,32 @@ public class MainWindowViewModel : BindableBase
     public string ModuleCountText => $"模块：{FilteredModules.Count}/{_allModules.Count}";
 
     public DelegateCommand ExitApplicationCommand { get; }
+    public DelegateCommand MinimizeWindowCommand { get; }
     public DelegateCommand NavigateHomeCommand { get; }
     public DelegateCommand NavigatePreviousCommand { get; }
     public DelegateCommand NavigateNextCommand { get; }
     public DelegateCommand ClearSearchCommand { get; }
 
-    public MainWindowViewModel(IRegionManager regionManager, AppModules.IModuleManager moduleManager)
+    public MainWindowViewModel(
+        IRegionManager regionManager,
+        AppModules.IModuleManager moduleManager,
+        IRuntimeStateService runtimeStateService)
     {
         _regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
         _moduleManager = moduleManager ?? throw new ArgumentNullException(nameof(moduleManager));
+        _runtimeStateService = runtimeStateService ?? throw new ArgumentNullException(nameof(runtimeStateService));
 
         _filteredModules = new ObservableCollection<AppModules.ModuleExport>();
 
         ExitApplicationCommand = new DelegateCommand(OnExitApplication);
+        MinimizeWindowCommand = new DelegateCommand(OnMinimizeWindow);
         NavigateHomeCommand = new DelegateCommand(OnNavigateHome, CanNavigateHome);
         NavigatePreviousCommand = new DelegateCommand(OnNavigatePrevious, CanNavigatePrevious);
         NavigateNextCommand = new DelegateCommand(OnNavigateNext, CanNavigateNext);
         ClearSearchCommand = new DelegateCommand(OnClearSearch, CanClearSearch);
 
         LoadModules();
+        RefreshShellStatus();
     }
 
     /// <summary>
@@ -117,7 +154,10 @@ public class MainWindowViewModel : BindableBase
         if (FilteredModules.Any())
         {
             SelectedModule = FilteredModules[0];
+            return;
         }
+
+        RefreshShellStatus();
     }
 
     private void ApplyFilter()
@@ -146,6 +186,7 @@ public class MainWindowViewModel : BindableBase
 
         CurrentModuleTitle = module.DisplayName;
         CurrentModuleDescription = module.Description;
+        RefreshShellStatus();
 
         if (addToHistory)
         {
@@ -247,9 +288,28 @@ public class MainWindowViewModel : BindableBase
         RaisePropertyChanged(nameof(ModuleCountText));
     }
 
+    private void RefreshShellStatus()
+    {
+        var dashboard = _runtimeStateService.GetDashboardData();
+        var workstation = _runtimeStateService.GetWorkstationData();
+
+        DeviceStatusText = $"设备状态：在线 {dashboard.OnlineDeviceCount} 台 / 离线 {dashboard.OfflineDeviceCount} 台";
+        WorkstationStatusText = $"工位状态：{workstation.CurrentStatus} · {(workstation.IsAutoMode ? "自动" : "手动")}模式";
+        CurrentUserText = $"当前用户：{Environment.UserName}";
+        LastRefreshText = $"更新时间：{dashboard.LastRefreshTime:yyyy-MM-dd HH:mm:ss}";
+    }
+
     /// <summary>
     /// 退出应用
     /// </summary>
+    private void OnMinimizeWindow()
+    {
+        if (Application.Current.MainWindow is not null)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+        }
+    }
+
     private void OnExitApplication()
     {
         Application.Current.Shutdown();
