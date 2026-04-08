@@ -18,33 +18,80 @@
             <Button DockPanel.Dock="Right" Content="刷新数据" Command="{Binding RefreshCommand}" Padding="16,8" Margin="16,0,0,0"/>
         </DockPanel>
 
-        <TextBlock Grid.Row="1" Text="{Binding LastRefreshTime, StringFormat=最近刷新：{0:yyyy-MM-dd HH:mm:ss}}" Margin="0,16,0,16" Foreground="#6B7280"/>
+        <Border Grid.Row="1" Margin="0,16,0,16" Padding="14,10" Background="#EFF6FF" BorderBrush="#BFDBFE" BorderThickness="1" CornerRadius="8">
+            <DockPanel>
+                <StackPanel>
+                    <TextBlock Text="{Binding RefreshSummary}" Foreground="#1D4ED8" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding SystemHealthStatus}" Margin="0,4,0,0" Foreground="#2563EB"/>
+                </StackPanel>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding OnlineRateText}" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="#1D4ED8"/>
+            </DockPanel>
+        </Border>
 
-        <UniformGrid Grid.Row="2" Columns="2" Rows="2">
-            <Border Margin="0,0,12,12" Padding="18" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
-                <StackPanel>
-                    <TextBlock Text="在线设备" Foreground="#6B7280"/>
-                    <TextBlock Text="{Binding OnlineDeviceCount}" FontSize="28" FontWeight="Bold" Foreground="#16A34A" Margin="0,8,0,0"/>
-                </StackPanel>
-            </Border>
-            <Border Margin="0,0,0,12" Padding="18" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
-                <StackPanel>
-                    <TextBlock Text="离线设备" Foreground="#6B7280"/>
-                    <TextBlock Text="{Binding OfflineDeviceCount}" FontSize="28" FontWeight="Bold" Foreground="#DC2626" Margin="0,8,0,0"/>
-                </StackPanel>
-            </Border>
-            <Border Margin="0,0,12,0" Padding="18" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
-                <StackPanel>
-                    <TextBlock Text="今日产量" Foreground="#6B7280"/>
-                    <TextBlock Text="{Binding TodayOutput}" FontSize="28" FontWeight="Bold" Foreground="#2563EB" Margin="0,8,0,0"/>
-                </StackPanel>
-            </Border>
-            <Border Padding="18" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
-                <StackPanel>
-                    <TextBlock Text="良率" Foreground="#6B7280"/>
-                    <TextBlock Text="{Binding YieldRate, StringFormat={}{0:F1}%}" FontSize="28" FontWeight="Bold" Foreground="#7C3AED" Margin="0,8,0,0"/>
-                </StackPanel>
-            </Border>
-        </UniformGrid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <UniformGrid Grid.Column="0" Columns="2" Rows="2" Margin="0,0,16,0">
+                <Border Margin="0,0,12,12" Padding="18" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Text="在线设备" Foreground="#6B7280"/>
+                        <TextBlock Text="{Binding OnlineDeviceCount}" FontSize="28" FontWeight="Bold" Foreground="#16A34A" Margin="0,8,0,0"/>
+                        <TextBlock Text="{Binding DeviceSummary}" Margin="0,8,0,0" Foreground="#6B7280" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+                <Border Margin="0,0,0,12" Padding="18" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Text="离线设备" Foreground="#6B7280"/>
+                        <TextBlock Text="{Binding OfflineDeviceCount}" FontSize="28" FontWeight="Bold" Foreground="#DC2626" Margin="0,8,0,0"/>
+                        <TextBlock Text="需优先排查通讯、供电与驱动状态。" Margin="0,8,0,0" Foreground="#6B7280" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+                <Border Margin="0,0,12,0" Padding="18" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Text="今日产量" Foreground="#6B7280"/>
+                        <TextBlock Text="{Binding TodayOutput}" FontSize="28" FontWeight="Bold" Foreground="#2563EB" Margin="0,8,0,0"/>
+                        <TextBlock Text="{Binding ProductionSummary}" Margin="0,8,0,0" Foreground="#6B7280" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+                <Border Padding="18" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Text="良率" Foreground="#6B7280"/>
+                        <TextBlock Text="{Binding YieldRate, StringFormat={}{0:F1}%}" FontSize="28" FontWeight="Bold" Foreground="#7C3AED" Margin="0,8,0,0"/>
+                        <TextBlock Text="良率可直接作为工艺稳定性和设备健康度指标。" Margin="0,8,0,0" Foreground="#6B7280" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <StackPanel Grid.Column="1">
+                <Border Padding="18" Margin="0,0,0,12" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Text="运行摘要" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
+                        <TextBlock Text="{Binding DeviceSummary}" Margin="0,12,0,0" Foreground="#374151" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding ProductionSummary}" Margin="0,8,0,0" Foreground="#374151" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+                <Border Padding="18" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="运维建议" FontSize="16" FontWeight="Bold" Foreground="#111827"/>
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding InsightItems}" Margin="0,12,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,10" Padding="12" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="6">
+                                        <TextBlock Text="{Binding}" Foreground="#374151" TextWrapping="Wrap"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

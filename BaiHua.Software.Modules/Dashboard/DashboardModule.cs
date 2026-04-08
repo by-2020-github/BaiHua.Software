@@ -34,6 +34,7 @@ public class DashboardModule : ModuleBase, IModuleLifecycle
         {
             Name = nameof(DashboardModule),
             DisplayName = "仪表板",
+            CategoryKey = ModuleNavigationCategories.Data,
             IconGlyph = "",
             Description = "查看系统总览、设备在线状态和生产统计。",
             ViewType = typeof(DashboardView),

@@ -17,9 +17,9 @@ public class MainWindowViewModel : BindableBase
 {
     private readonly IRegionManager _regionManager;
     private readonly AppModules.IModuleManager _moduleManager;
+    private readonly AppModules.IModuleNavigationRegistry _moduleNavigationRegistry;
     private readonly IRuntimeStateService _runtimeStateService;
     private readonly List<AppModules.ModuleExport> _allModules = [];
-    private readonly List<string> _navigationHistory = [];
 
     private string _title = "BaiHua.Software - 上位机通用框架";
     private ObservableCollection<AppModules.ModuleExport> _filteredModules;
@@ -31,8 +31,7 @@ public class MainWindowViewModel : BindableBase
     private string _workstationStatusText = "工位状态加载中...";
     private string _currentUserText = $"当前用户：{Environment.UserName}";
     private string _lastRefreshText = "更新时间：--";
-    private int _navigationHistoryIndex = -1;
-    private bool _recordSelectionInHistory = true;
+    private ObservableCollection<ModuleNavigationGroup> _navigationGroups;
 
     public string Title
     {
@@ -53,9 +52,15 @@ public class MainWindowViewModel : BindableBase
         {
             if (SetProperty(ref _selectedModule, value) && value is not null)
             {
-                OpenModule(value, _recordSelectionInHistory);
+                OpenModule(value);
             }
         }
+    }
+
+    public ObservableCollection<ModuleNavigationGroup> NavigationGroups
+    {
+        get => _navigationGroups;
+        set => SetProperty(ref _navigationGroups, value);
     }
 
     public string FilterText
@@ -107,35 +112,28 @@ public class MainWindowViewModel : BindableBase
         set => SetProperty(ref _lastRefreshText, value);
     }
 
-    public string NavigationStatus => _navigationHistoryIndex >= 0
-        ? $"导航记录：{_navigationHistoryIndex + 1}/{_navigationHistory.Count}"
-        : "导航记录：0/0";
-
     public string ModuleCountText => $"模块：{FilteredModules.Count}/{_allModules.Count}";
 
     public DelegateCommand ExitApplicationCommand { get; }
     public DelegateCommand MinimizeWindowCommand { get; }
-    public DelegateCommand NavigateHomeCommand { get; }
-    public DelegateCommand NavigatePreviousCommand { get; }
-    public DelegateCommand NavigateNextCommand { get; }
     public DelegateCommand ClearSearchCommand { get; }
 
     public MainWindowViewModel(
         IRegionManager regionManager,
         AppModules.IModuleManager moduleManager,
+        AppModules.IModuleNavigationRegistry moduleNavigationRegistry,
         IRuntimeStateService runtimeStateService)
     {
         _regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
         _moduleManager = moduleManager ?? throw new ArgumentNullException(nameof(moduleManager));
+        _moduleNavigationRegistry = moduleNavigationRegistry ?? throw new ArgumentNullException(nameof(moduleNavigationRegistry));
         _runtimeStateService = runtimeStateService ?? throw new ArgumentNullException(nameof(runtimeStateService));
 
         _filteredModules = new ObservableCollection<AppModules.ModuleExport>();
+        _navigationGroups = new ObservableCollection<ModuleNavigationGroup>();
 
         ExitApplicationCommand = new DelegateCommand(OnExitApplication);
         MinimizeWindowCommand = new DelegateCommand(OnMinimizeWindow);
-        NavigateHomeCommand = new DelegateCommand(OnNavigateHome, CanNavigateHome);
-        NavigatePreviousCommand = new DelegateCommand(OnNavigatePrevious, CanNavigatePrevious);
-        NavigateNextCommand = new DelegateCommand(OnNavigateNext, CanNavigateNext);
         ClearSearchCommand = new DelegateCommand(OnClearSearch, CanClearSearch);
 
         LoadModules();
@@ -170,11 +168,34 @@ public class MainWindowViewModel : BindableBase
                 || m.Description.Contains(keyword, StringComparison.OrdinalIgnoreCase)).ToList();
 
         FilteredModules = new ObservableCollection<AppModules.ModuleExport>(modules);
+        BuildNavigationGroups();
         RaisePropertyChanged(nameof(ModuleCountText));
-        UpdateNavigationCommands();
     }
 
-    private void OpenModule(AppModules.ModuleExport module, bool addToHistory)
+    private void BuildNavigationGroups()
+    {
+        var categoryDefinitions = _moduleNavigationRegistry.GetCategories();
+
+        var groupedModules = FilteredModules
+            .GroupBy(module => _moduleNavigationRegistry.GetCategoryOrDefault(module.CategoryKey).Key,
+                StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.OrderBy(module => module.Order).ToList(), StringComparer.OrdinalIgnoreCase);
+
+        NavigationGroups = new ObservableCollection<ModuleNavigationGroup>(
+            categoryDefinitions.Select(definition => new ModuleNavigationGroup
+            {
+                Key = definition.Key,
+                Title = definition.Title,
+                Description = definition.Description,
+                IconGlyph = definition.IconGlyph,
+                Modules = new ObservableCollection<AppModules.ModuleExport>(
+                    groupedModules.TryGetValue(definition.Key, out var modules)
+                        ? modules
+                        : [])
+            }));
+    }
+
+    private void OpenModule(AppModules.ModuleExport module)
     {
         _moduleManager.LoadModule(module.Name);
 
@@ -187,88 +208,6 @@ public class MainWindowViewModel : BindableBase
         CurrentModuleTitle = module.DisplayName;
         CurrentModuleDescription = module.Description;
         RefreshShellStatus();
-
-        if (addToHistory)
-        {
-            RecordHistory(module.Name);
-        }
-
-        RaisePropertyChanged(nameof(NavigationStatus));
-        UpdateNavigationCommands();
-    }
-
-    private void RecordHistory(string moduleName)
-    {
-        if (_navigationHistoryIndex >= 0
-            && _navigationHistoryIndex < _navigationHistory.Count
-            && _navigationHistory[_navigationHistoryIndex] == moduleName)
-        {
-            return;
-        }
-
-        if (_navigationHistoryIndex < _navigationHistory.Count - 1)
-        {
-            _navigationHistory.RemoveRange(_navigationHistoryIndex + 1, _navigationHistory.Count - _navigationHistoryIndex - 1);
-        }
-
-        _navigationHistory.Add(moduleName);
-        _navigationHistoryIndex = _navigationHistory.Count - 1;
-    }
-
-    private bool CanNavigateHome() => _allModules.Any();
-
-    private void OnNavigateHome()
-    {
-        var target = FilteredModules.FirstOrDefault() ?? _allModules.FirstOrDefault();
-        if (target is not null)
-        {
-            SelectedModule = target;
-        }
-    }
-
-    private bool CanNavigatePrevious() => _navigationHistoryIndex > 0;
-
-    private void OnNavigatePrevious()
-    {
-        if (!CanNavigatePrevious())
-        {
-            return;
-        }
-
-        _navigationHistoryIndex--;
-        NavigateByHistory(_navigationHistory[_navigationHistoryIndex]);
-    }
-
-    private bool CanNavigateNext() => _navigationHistoryIndex >= 0 && _navigationHistoryIndex < _navigationHistory.Count - 1;
-
-    private void OnNavigateNext()
-    {
-        if (!CanNavigateNext())
-        {
-            return;
-        }
-
-        _navigationHistoryIndex++;
-        NavigateByHistory(_navigationHistory[_navigationHistoryIndex]);
-    }
-
-    private void NavigateByHistory(string moduleName)
-    {
-        var target = _allModules.FirstOrDefault(m => m.Name == moduleName);
-        if (target is null)
-        {
-            return;
-        }
-
-        _recordSelectionInHistory = false;
-        try
-        {
-            SelectedModule = target;
-        }
-        finally
-        {
-            _recordSelectionInHistory = true;
-        }
     }
 
     private bool CanClearSearch() => !string.IsNullOrWhiteSpace(FilterText);
@@ -276,16 +215,6 @@ public class MainWindowViewModel : BindableBase
     private void OnClearSearch()
     {
         FilterText = string.Empty;
-    }
-
-    private void UpdateNavigationCommands()
-    {
-        NavigateHomeCommand.RaiseCanExecuteChanged();
-        NavigatePreviousCommand.RaiseCanExecuteChanged();
-        NavigateNextCommand.RaiseCanExecuteChanged();
-        ClearSearchCommand.RaiseCanExecuteChanged();
-        RaisePropertyChanged(nameof(NavigationStatus));
-        RaisePropertyChanged(nameof(ModuleCountText));
     }
 
     private void RefreshShellStatus()
@@ -314,4 +243,19 @@ public class MainWindowViewModel : BindableBase
     {
         Application.Current.Shutdown();
     }
+}
+
+public sealed class ModuleNavigationGroup
+{
+    public string Key { get; set; } = string.Empty;
+
+    public string Title { get; set; } = string.Empty;
+
+    public string Description { get; set; } = string.Empty;
+
+    public string IconGlyph { get; set; } = string.Empty;
+
+    public ObservableCollection<AppModules.ModuleExport> Modules { get; set; } = [];
+
+    public bool HasModules => Modules.Count > 0;
 }

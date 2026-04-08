@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
         Title="{Binding Title}" 
-        Height="600" Width="1000"
+        Height="1080" Width="1920"
         WindowStartupLocation="CenterScreen"
         Background="#F5F5F5">
 
@@ -68,15 +68,10 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <DockPanel Grid.Row="0" Margin="20,18,20,14">
+                <DockPanel Grid.Row="0" Margin="20,18,20,14" Visibility="Collapsed">
                     <StackPanel DockPanel.Dock="Left">
                         <TextBlock Text="{Binding CurrentModuleTitle}" FontSize="24" FontWeight="Bold" Foreground="#111827"/>
                         <TextBlock Text="{Binding CurrentModuleDescription}" Margin="0,6,0,0" Foreground="#6B7280"/>
-                    </StackPanel>
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button Content="首页" Command="{Binding NavigateHomeCommand}" Padding="14,8" Margin="0,0,8,0" Background="#F3F4F6" BorderBrush="#D1D5DB"/>
-                        <Button Content="上一页" Command="{Binding NavigatePreviousCommand}" Padding="14,8" Margin="0,0,8,0" Background="#F3F4F6" BorderBrush="#D1D5DB"/>
-                        <Button Content="下一页" Command="{Binding NavigateNextCommand}" Padding="14,8" Background="#F3F4F6" BorderBrush="#D1D5DB"/>
                     </StackPanel>
                 </DockPanel>
 
@@ -93,57 +88,96 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <DockPanel Grid.Row="0" Margin="0,0,0,10">
+                <DockPanel Grid.Row="0" Margin="0,0,0,10" Visibility="Collapsed">
                     <TextBlock Text="模块导航" Foreground="White" FontSize="16" FontWeight="Bold"/>
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                        <TextBlock Text="{Binding NavigationStatus}" Foreground="#D1D5DB" Margin="0,0,16,0"/>
                         <TextBlock Text="{Binding ModuleCountText}" Foreground="#D1D5DB"/>
                     </StackPanel>
                 </DockPanel>
 
-                <ListBox Grid.Row="1"
-                         ItemsSource="{Binding FilteredModules}"
-                         SelectedItem="{Binding SelectedModule}"
-                         Background="Transparent"
-                         BorderThickness="0"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Border Padding="16,12" CornerRadius="10">
-                                <StackPanel Width="140">
-                                    <TextBlock Text="{Binding IconGlyph}" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" Foreground="White"/>
-                                    <TextBlock Text="{Binding DisplayName}" Margin="0,8,0,0" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" Foreground="White"/>
-                                    <TextBlock Text="{Binding Name}" Margin="0,4,0,0" FontSize="10" HorizontalAlignment="Center" Foreground="#9CA3AF"/>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="Margin" Value="0,0,12,0"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#2563EB"/>
-                                    <Setter Property="BorderBrush" Value="#60A5FA"/>
-                                    <Setter Property="BorderThickness" Value="1"/>
-                                </Trigger>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#1F2937"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
+                <ScrollViewer Grid.Row="1"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding NavigationGroups}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="220" Margin="0,0,12,0" Padding="14,12" Background="#1F2937" CornerRadius="12" BorderBrush="#374151" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel>
+                                            <DockPanel>
+                                                <TextBlock Text="{Binding IconGlyph}" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#93C5FD"/>
+                                                <TextBlock Text="{Binding Title}" Margin="8,0,0,0" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                                            </DockPanel>
+                                            <TextBlock Text="{Binding Description}" Margin="0,6,0,0" FontSize="11" Foreground="#9CA3AF" TextWrapping="Wrap"/>
+                                        </StackPanel>
+
+                                        <Grid Grid.Row="1" Margin="0,12,0,0">
+                                            <TextBlock x:Name="EmptyModulesText" Text="待注册模块" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#6B7280" FontSize="12" Visibility="Collapsed"/>
+                                            <ListBox x:Name="CategoryModuleList"
+                                                     ItemsSource="{Binding Modules}"
+                                                     SelectionChanged="OnCategoryModuleSelectionChanged"
+                                                     Background="Transparent"
+                                                     BorderThickness="0"
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                                <ListBox.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ListBox.ItemsPanel>
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Padding="10,8" CornerRadius="8" ToolTip="{Binding Description}">
+                                                            <StackPanel Width="72">
+                                                                <TextBlock Text="{Binding IconGlyph}" FontFamily="Segoe MDL2 Assets" FontSize="18" HorizontalAlignment="Center" Foreground="White"/>
+                                                                <TextBlock Text="{Binding DisplayName}" Margin="0,6,0,0" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="White" TextWrapping="Wrap" TextAlignment="Center"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <Setter Property="Padding" Value="0"/>
+                                                        <Setter Property="Margin" Value="0,0,8,8"/>
+                                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                        <Setter Property="Background" Value="#111827"/>
+                                                        <Setter Property="BorderBrush" Value="#374151"/>
+                                                        <Setter Property="BorderThickness" Value="1"/>
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter Property="Background" Value="#2563EB"/>
+                                                                <Setter Property="BorderBrush" Value="#60A5FA"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="#374151"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
+                                            </ListBox>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding HasModules}" Value="False">
+                                        <Setter TargetName="EmptyModulesText" Property="Visibility" Value="Visible"/>
+                                        <Setter TargetName="CategoryModuleList" Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </Grid>
         </Border>
     </Grid>

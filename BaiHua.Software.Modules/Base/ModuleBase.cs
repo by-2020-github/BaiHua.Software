@@ -3,6 +3,15 @@ using Prism.Modularity;
 
 namespace BaiHua.Software.Modules;
 
+public static class ModuleNavigationCategories
+{
+    public const string Operation = "Op";
+    public const string Configuration = "Config";
+    public const string Hardware = "Hardware";
+    public const string Data = "Data";
+    public const string User = "User";
+}
+
 /// <summary>
 /// 模块基类 - 所有功能模块的基础
 /// </summary>
@@ -39,6 +48,11 @@ public class ModuleExport
     /// 模块显示名称
     /// </summary>
     public string DisplayName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 导航分类键
+    /// </summary>
+    public string CategoryKey { get; set; } = ModuleNavigationCategories.Data;
 
     /// <summary>
     /// 导航图标（Segoe MDL2 Assets）

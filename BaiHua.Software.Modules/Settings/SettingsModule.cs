@@ -36,6 +36,7 @@ public class SettingsModule : ModuleBase, IModuleLifecycle
         {
             Name = nameof(SettingsModule),
             DisplayName = "设置",
+            CategoryKey = ModuleNavigationCategories.Configuration,
             IconGlyph = "",
             Description = "维护系统参数、界面主题和运行选项。",
             ViewType = typeof(SettingsView),

@@ -15,6 +15,9 @@ public class WorkstationViewModel : BindableBase
     private double _axisPosition;
     private double _temperature;
     private double _pressure;
+    private string _executionSummary = string.Empty;
+    private string _latestLog = string.Empty;
+    private string _controlHint = string.Empty;
 
     public string Title
     {
@@ -48,6 +51,24 @@ public class WorkstationViewModel : BindableBase
 
     public string OperationMode => IsAutoMode ? "自动" : "手动";
 
+    public string ExecutionSummary
+    {
+        get => _executionSummary;
+        set => SetProperty(ref _executionSummary, value);
+    }
+
+    public string LatestLog
+    {
+        get => _latestLog;
+        set => SetProperty(ref _latestLog, value);
+    }
+
+    public string ControlHint
+    {
+        get => _controlHint;
+        set => SetProperty(ref _controlHint, value);
+    }
+
     public double AxisPosition
     {
         get => _axisPosition;
@@ -76,12 +97,16 @@ public class WorkstationViewModel : BindableBase
     public WorkstationViewModel(IWorkstationAppService workstationAppService)
     {
         _workstationAppService = workstationAppService;
-        StartCommand = new DelegateCommand(OnStart);
-        StopCommand = new DelegateCommand(OnStop);
+        StartCommand = new DelegateCommand(OnStart, CanStart);
+        StopCommand = new DelegateCommand(OnStop, CanStop);
         ResetCommand = new DelegateCommand(OnReset);
         ToggleModeCommand = new DelegateCommand(OnToggleMode);
         Apply(_workstationAppService.GetWorkstation());
     }
+
+    private bool CanStart() => CurrentStatus != "运行中";
+
+    private bool CanStop() => CurrentStatus == "运行中" || CurrentStatus == "待机";
 
     private void OnStart()
     {
@@ -118,5 +143,15 @@ public class WorkstationViewModel : BindableBase
         {
             OperationLogs.Add(log);
         }
+
+        ExecutionSummary = $"{CurrentStatus} · {OperationMode} · 轴位 {AxisPosition:F2} mm · 温度 {Temperature:F1} ℃ · 压力 {Pressure:F2} MPa";
+        LatestLog = OperationLogs.FirstOrDefault() ?? "暂无操作日志。";
+        ControlHint = CurrentStatus == "运行中"
+            ? "设备处于运行中，可执行停止、模式切换或监控操作。"
+            : "设备当前未运行，可启动或复位后重新进入生产流程。";
+
+        StartCommand.RaiseCanExecuteChanged();
+        StopCommand.RaiseCanExecuteChanged();
+        RaisePropertyChanged(nameof(OperationMode));
     }
 }

@@ -1,0 +1,125 @@
+<UserControl x:Class="BaiHua.Software.Modules.User.Views.UserView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid Background="White" Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Bold" Foreground="#1F2937"/>
+            <TextBlock Text="{Binding Summary}" Margin="0,6,0,0" Foreground="#6B7280"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,18,0,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Margin="0,0,12,0" Padding="16" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                <StackPanel>
+                    <TextBlock Text="当前用户" Foreground="#6B7280"/>
+                    <TextBlock Text="{Binding CurrentUser}" Margin="0,8,0,0" FontSize="18" FontWeight="Bold" Foreground="#111827"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Margin="0,0,12,0" Padding="16" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                <StackPanel>
+                    <TextBlock Text="当前角色" Foreground="#6B7280"/>
+                    <TextBlock Text="{Binding CurrentRole}" Margin="0,8,0,0" FontSize="18" FontWeight="Bold" Foreground="#111827"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Margin="0,0,12,0" Padding="16" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                <StackPanel>
+                    <TextBlock Text="当前班次" Foreground="#6B7280"/>
+                    <TextBlock Text="{Binding CurrentShift}" Margin="0,8,0,0" FontSize="18" FontWeight="Bold" Foreground="#111827"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="3" Padding="16" Background="#EFF6FF" BorderBrush="#BFDBFE" BorderThickness="1" CornerRadius="8">
+                <StackPanel>
+                    <TextBlock Text="最近登录" Foreground="#1D4ED8"/>
+                    <TextBlock Text="{Binding LastLoginTime}" Margin="0,8,0,0" FontSize="16" FontWeight="Bold" Foreground="#2563EB"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Margin="0,0,16,0" Padding="16" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="功能规划" FontSize="16" FontWeight="Bold" Foreground="#1F2937"/>
+                    <TextBlock Grid.Row="1" Text="{Binding SecuritySummary}" Margin="0,8,0,12" Foreground="#6B7280" TextWrapping="Wrap"/>
+                    <ItemsControl Grid.Row="2" ItemsSource="{Binding FeatureItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,10" Padding="12" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="6">
+                                    <StackPanel>
+                                        <DockPanel>
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" Foreground="#111827"/>
+                                            <TextBlock Text="{Binding Stage}" DockPanel.Dock="Right" Foreground="#2563EB" FontWeight="SemiBold"/>
+                                        </DockPanel>
+                                        <TextBlock Text="{Binding Description}" Margin="0,8,0,0" Foreground="#374151" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+
+            <StackPanel Grid.Column="1">
+                <Border Padding="16" Margin="0,0,0,12" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="权限分组" FontSize="16" FontWeight="Bold" Foreground="#1F2937"/>
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding PermissionGroups}" Margin="0,12,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,10" Padding="10" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="6">
+                                        <TextBlock Text="{Binding}" Foreground="#374151" TextWrapping="Wrap"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+                <Border Padding="16" Background="#F8FAFC" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="审计摘要" FontSize="16" FontWeight="Bold" Foreground="#1F2937"/>
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding AuditItems}" Margin="0,12,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,10" Padding="10" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="6">
+                                        <TextBlock Text="{Binding}" Foreground="#374151" TextWrapping="Wrap"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

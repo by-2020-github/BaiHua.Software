@@ -16,6 +16,9 @@ public class SettingsViewModel : BindableBase
     private bool _autoStart;
     private bool _enableOperationLog;
     private string _statusMessage = string.Empty;
+    private string _runtimeSummary = string.Empty;
+    private string _interfaceSummary = string.Empty;
+    private string _persistenceSummary = string.Empty;
 
     public string Title
     {
@@ -26,13 +29,25 @@ public class SettingsViewModel : BindableBase
     public string SystemName
     {
         get => _systemName;
-        set => SetProperty(ref _systemName, value);
+        set
+        {
+            if (SetProperty(ref _systemName, value))
+            {
+                UpdateDerivedState();
+            }
+        }
     }
 
     public string DeviceCode
     {
         get => _deviceCode;
-        set => SetProperty(ref _deviceCode, value);
+        set
+        {
+            if (SetProperty(ref _deviceCode, value))
+            {
+                UpdateDerivedState();
+            }
+        }
     }
 
     public ObservableCollection<string> Languages { get; } = ["中文", "English"];
@@ -40,7 +55,13 @@ public class SettingsViewModel : BindableBase
     public string SelectedLanguage
     {
         get => _selectedLanguage;
-        set => SetProperty(ref _selectedLanguage, value);
+        set
+        {
+            if (SetProperty(ref _selectedLanguage, value))
+            {
+                UpdateDerivedState();
+            }
+        }
     }
 
     public ObservableCollection<string> Themes { get; } = ["浅色", "深色"];
@@ -48,26 +69,70 @@ public class SettingsViewModel : BindableBase
     public string SelectedTheme
     {
         get => _selectedTheme;
-        set => SetProperty(ref _selectedTheme, value);
+        set
+        {
+            if (SetProperty(ref _selectedTheme, value))
+            {
+                UpdateDerivedState();
+            }
+        }
     }
 
     public bool AutoStart
     {
         get => _autoStart;
-        set => SetProperty(ref _autoStart, value);
+        set
+        {
+            if (SetProperty(ref _autoStart, value))
+            {
+                UpdateDerivedState();
+            }
+        }
     }
 
     public bool EnableOperationLog
     {
         get => _enableOperationLog;
-        set => SetProperty(ref _enableOperationLog, value);
+        set
+        {
+            if (SetProperty(ref _enableOperationLog, value))
+            {
+                UpdateDerivedState();
+            }
+        }
     }
 
     public string StatusMessage
     {
         get => _statusMessage;
-        set => SetProperty(ref _statusMessage, value);
+        set
+        {
+            if (SetProperty(ref _statusMessage, value))
+            {
+                UpdateDerivedState();
+            }
+        }
     }
+
+    public string RuntimeSummary
+    {
+        get => _runtimeSummary;
+        set => SetProperty(ref _runtimeSummary, value);
+    }
+
+    public string InterfaceSummary
+    {
+        get => _interfaceSummary;
+        set => SetProperty(ref _interfaceSummary, value);
+    }
+
+    public string PersistenceSummary
+    {
+        get => _persistenceSummary;
+        set => SetProperty(ref _persistenceSummary, value);
+    }
+
+    public ObservableCollection<string> PreviewItems { get; } = [];
 
     public DelegateCommand SaveCommand { get; }
     public DelegateCommand RestoreDefaultsCommand { get; }
@@ -110,5 +175,19 @@ public class SettingsViewModel : BindableBase
         AutoStart = data.AutoStart;
         EnableOperationLog = data.EnableOperationLog;
         StatusMessage = data.StatusMessage;
+        UpdateDerivedState();
+    }
+
+    private void UpdateDerivedState()
+    {
+        RuntimeSummary = $"系统 {SystemName} / 设备 {DeviceCode}";
+        InterfaceSummary = $"语言 {SelectedLanguage} · 主题 {SelectedTheme}";
+        PersistenceSummary = $"自动启动：{(AutoStart ? "开启" : "关闭")} · 操作日志：{(EnableOperationLog ? "开启" : "关闭")}";
+
+        PreviewItems.Clear();
+        PreviewItems.Add($"系统名称：{SystemName}");
+        PreviewItems.Add($"设备编号：{DeviceCode}");
+        PreviewItems.Add($"界面设置：{SelectedLanguage} / {SelectedTheme}");
+        PreviewItems.Add($"运行行为：{(AutoStart ? "开机自启" : "手动启动")}，{(EnableOperationLog ? "记录操作日志" : "关闭操作日志")}");
     }
 }
